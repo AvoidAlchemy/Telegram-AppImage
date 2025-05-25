@@ -1,11 +1,7 @@
 
 name: Release
-on:
-  schedule:
-    - cron: "45 */12 * * *"
-  push:
-    branches:
-      - "main"
+on: workflow_dispatch
+permissions: write-all
 
 
 jobs:
@@ -13,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Download Packages
+      run: |
+        sudo apt update && sudo apt install -y fuse libfuse2
 
     - name: Download Telegram
       env:
@@ -21,9 +21,8 @@ jobs:
         chmod +x build.sh
         ./build.sh
 
-
     - name: Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: telegram-continuous.AppImage
         path: 'dist'
